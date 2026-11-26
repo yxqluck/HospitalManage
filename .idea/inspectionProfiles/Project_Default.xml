@@ -1,0 +1,29 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="VulnerableLibrariesLocal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="isIgnoringEnabled" value="true" />
+      <option name="ignoredModules">
+        <list>
+          <option value="Manage" />
+          <option value="Manage" />
+          <option value="Manage" />
+        </list>
+      </option>
+      <option name="ignoredPackages">
+        <list>
+          <option value="com.vaadin.external.google:android-json:0.0.20131108.vaadin1" />
+          <option value="org.apache.tomcat.embed:tomcat-embed-core:11.0.27" />
+          <option value="org.apache.tomcat.embed:tomcat-embed-websocket:11.0.27" />
+        </list>
+      </option>
+      <option name="ignoredReasons">
+        <list>
+          <option value="其他" />
+          <option value="其他" />
+          <option value="其他" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
