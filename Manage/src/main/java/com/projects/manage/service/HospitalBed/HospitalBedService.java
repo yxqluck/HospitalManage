@@ -1,12 +1,15 @@
 package com.projects.manage.service.HospitalBed;
 
+import com.projects.manage.DTO.HospitalBedPageReq;
+import com.projects.manage.common.PageResult;
 import com.projects.manage.controller.HospitalBed.VO.HospitalBedVO;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface HospitalBedService {
 
     List<HospitalBedVO> findAll();
+
+    PageResult<HospitalBedVO> findPage(HospitalBedPageReq req);
 }

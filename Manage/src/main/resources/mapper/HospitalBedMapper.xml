@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.projects.manage.mapper.HospitalBedMapper">
+    <select id="findPage" resultType="com.projects.manage.controller.HospitalBed.VO.HospitalBedVO">
+        select hb.bed_id, hb.room_id, hb.bed_no, hb.bed_status, hr.dept, hr.location
+        from hospital_bed hb
+        join hospital_room hr on hb.room_id = hr.room_id
+        <where>
+            <if test="req.roomId != null">
+                AND hb.room_id = #{req.roomId}
+            </if>
+            <if test="req.bedStatus != null">
+                AND bed_status = #{req.bedStatus}
+            </if>
+            <if test="req.dept != null and req.dept != ''">
+                AND dept = #{req.dept}
+            </if>
+        </where>
+        order by hb.room_id, hb.bed_no
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countPage" resultType="Long">
+        select count(*)
+        from hospital_bed hb join hospital_room hr on hb.room_id = hb.room_id
+        <where>
+            <if test="req.roomId != null">
+                AND hb.room_id = #{req.roomId}
+            </if>
+            <if test="req.bedStatus != null">
+                AND bed_status = #{req.bedStatus}
+            </if>
+            <if test="req.dept != null and req.dept != ''">
+                AND dept = #{req.dept}
+            </if>
+        </where>
+    </select>
+</mapper>
