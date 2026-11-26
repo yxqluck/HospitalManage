@@ -1,0 +1,23 @@
+<script lang="ts" setup>
+import { useAppStore } from '@/store/modules/app'
+import { useDesign } from '@/hooks/web/useDesign'
+
+defineOptions({ name: 'Footer' })
+
+const { getPrefixCls } = useDesign()
+
+const prefixCls = getPrefixCls('footer')
+
+const appStore = useAppStore()
+
+const title = computed(() => appStore.getTitle)
+</script>
+
+<template>
+  <div
+    :class="prefixCls"
+    class="h-[var(--app-footer-height)] bg-[var(--app-content-bg-color)] text-center leading-[var(--app-footer-height)] text-[var(--el-text-color-placeholder)] overflow-hidden"
+  >
+    Copyright ©2021-present {{ title }}
+  </div>
+</template>

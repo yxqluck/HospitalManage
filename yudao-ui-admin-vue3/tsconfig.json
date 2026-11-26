@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "strictFunctionTypes": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "element-plus/es": ["./types/element-plus-compat.ts"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": ["src", "types/**/*.d.ts"]
+}

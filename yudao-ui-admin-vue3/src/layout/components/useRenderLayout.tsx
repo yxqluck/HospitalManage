@@ -1,0 +1,359 @@
+import { computed } from 'vue'
+import { useAppStore } from '@/store/modules/app'
+import { usePermissionStore } from '@/store/modules/permission'
+import { Menu } from '@/layout/components/Menu'
+import { TabMenu } from '@/layout/components/TabMenu'
+import { TagsView } from '@/layout/components/TagsView'
+import { Logo } from '@/layout/components/Logo'
+import AppView from './AppView.vue'
+import ToolHeader from './ToolHeader.vue'
+import { ElScrollbar } from 'element-plus'
+import { useDesign } from '@/hooks/web/useDesign'
+import { isHeaderMixedNavLayout, isMixedNavLayout, isTwoColumnLayout } from '@/utils/layout'
+
+const { getPrefixCls } = useDesign()
+
+const prefixCls = getPrefixCls('layout')
+
+const appStore = useAppStore()
+
+const permissionStore = usePermissionStore()
+
+const pageLoading = computed(() => appStore.getPageLoading)
+
+// 标签页
+const tagsView = computed(() => appStore.getTagsView)
+
+// 菜单折叠
+const collapse = computed(() => appStore.getCollapse)
+
+// logo
+const logo = computed(() => appStore.logo)
+
+// 固定头部
+const fixedHeader = computed(() => appStore.getFixedHeader)
+
+// 是否是移动端
+const mobile = computed(() => appStore.getMobile)
+
+// 固定菜单
+const fixedMenu = computed(() => appStore.getFixedMenu)
+
+const layout = computed(() => appStore.getLayout)
+
+export const useRenderLayout = () => {
+  const renderClassic = () => {
+    return (
+      <>
+        <aside
+          class={[
+            'absolute top-0 left-0 h-full layout-border__right',
+            {
+              '!fixed z-3000': mobile.value,
+              [`${prefixCls}__sidebar--mobile-open`]: mobile.value && !collapse.value
+            }
+          ]}
+        >
+          {logo.value ? (
+            <Logo
+              class={[
+                'bg-[var(--left-menu-bg-color)] relative',
+                {
+                  // 移动端收起时侧栏宽度为 0：裁掉 Logo 链接左右内距撑出的区域，避免遮挡并截获工具栏折叠按钮的点击
+                  '!pl-0 overflow-hidden': mobile.value && collapse.value,
+                  'w-[var(--left-menu-min-width)]': appStore.getCollapse,
+                  'w-[var(--left-menu-max-width)]': !appStore.getCollapse
+                }
+              ]}
+              style="transition: all var(--transition-time-02);"
+            ></Logo>
+          ) : undefined}
+          <Menu class={[{ '!h-[calc(100%-var(--logo-height))]': logo.value }]}></Menu>
+        </aside>
+        <main
+          class={[
+            `${prefixCls}-content`,
+            'absolute top-0 h-[100%]',
+            {
+              'w-[calc(100%-var(--left-menu-min-width))] left-[var(--left-menu-min-width)]':
+                collapse.value && !mobile.value && !mobile.value,
+              'w-[calc(100%-var(--left-menu-max-width))] left-[var(--left-menu-max-width)]':
+                !collapse.value && !mobile.value && !mobile.value,
+              'fixed !w-full !left-0': mobile.value
+            }
+          ]}
+          style="transition: width var(--transition-time-02), left var(--transition-time-02);"
+        >
+          <ElScrollbar
+            v-loading={pageLoading.value}
+            class={[
+              `${prefixCls}-content-scrollbar`,
+              {
+                '!h-[calc(100%-var(--top-tool-height)-var(--tags-view-height))] mt-[calc(var(--top-tool-height)+var(--tags-view-height))]':
+                  fixedHeader.value
+              }
+            ]}
+          >
+            <div
+              class={[
+                `${prefixCls}__toolbar`,
+                {
+                  'fixed top-0 left-0 z-10': fixedHeader.value,
+                  'w-[calc(100%-var(--left-menu-min-width))] !left-[var(--left-menu-min-width)]':
+                    collapse.value && fixedHeader.value && !mobile.value,
+                  'w-[calc(100%-var(--left-menu-max-width))] !left-[var(--left-menu-max-width)]':
+                    !collapse.value && fixedHeader.value && !mobile.value,
+                  '!w-full !left-0': mobile.value
+                }
+              ]}
+              style="transition: all var(--transition-time-02);"
+            >
+              <ToolHeader
+                class={[
+                  'bg-[var(--top-header-bg-color)]',
+                  {
+                    'layout-border__bottom': !tagsView.value
+                  }
+                ]}
+              ></ToolHeader>
+
+              {tagsView.value ? (
+                <TagsView class="layout-border__top layout-border__bottom"></TagsView>
+              ) : undefined}
+            </div>
+
+            <AppView></AppView>
+          </ElScrollbar>
+        </main>
+      </>
+    )
+  }
+
+  const renderTopLeft = () => {
+    const showHeaderMenu = isMixedNavLayout(layout.value)
+    return (
+      <>
+        <header
+          role="banner"
+          class={[
+            `${prefixCls}__topbar`,
+            'relative flex items-center bg-[var(--top-header-bg-color)] layout-border__bottom dark:bg-[var(--top-tool-dark-bg-color)]'
+          ]}
+        >
+          {/* 窄屏时 Logo 标题省略让位（最小保留图片 58px + 右内距 15px），根菜单至少保留左右内距 20px + “更多”64px */}
+          {logo.value ? (
+            <Logo class="header-action !w-auto !pr-15px min-w-[73px]"></Logo>
+          ) : undefined}
+
+          {showHeaderMenu ? (
+            <Menu
+              mode="horizontal"
+              rootOnly
+              theme="header"
+              class="h-[var(--top-tool-height)] !min-w-[84px] flex-1 px-10px"
+            ></Menu>
+          ) : undefined}
+
+          <ToolHeader class={showHeaderMenu ? 'flex-none' : 'flex-1'}></ToolHeader>
+        </header>
+        <div class="absolute left-0 top-[var(--logo-height)] h-[calc(100%-var(--logo-height))] w-full flex">
+          <Menu
+            split={showHeaderMenu}
+            mode="vertical"
+            class="relative layout-border__right !h-full"
+          ></Menu>
+          <main
+            class={[
+              `${prefixCls}-content`,
+              'h-[100%] flex-none',
+              {
+                'w-[calc(100%-var(--left-menu-min-width))] left-[var(--left-menu-min-width)]':
+                  collapse.value,
+                'w-[calc(100%-var(--left-menu-max-width))] left-[var(--left-menu-max-width)]':
+                  !collapse.value
+              }
+            ]}
+            style="transition: all var(--transition-time-02);"
+          >
+            <ElScrollbar
+              v-loading={pageLoading.value}
+              class={[
+                `${prefixCls}-content-scrollbar`,
+                {
+                  '!h-[calc(100%-var(--tags-view-height))] mt-[calc(var(--tags-view-height))]':
+                    fixedHeader.value && tagsView.value
+                }
+              ]}
+            >
+              {tagsView.value ? (
+                <TagsView
+                  class={[
+                    'layout-border__bottom absolute',
+                    {
+                      '!fixed top-0 left-0 z-10': fixedHeader.value,
+                      'w-[calc(100%-var(--left-menu-min-width))] !left-[var(--left-menu-min-width)] mt-[var(--logo-height)]':
+                        collapse.value && fixedHeader.value,
+                      'w-[calc(100%-var(--left-menu-max-width))] !left-[var(--left-menu-max-width)] mt-[var(--logo-height)]':
+                        !collapse.value && fixedHeader.value
+                    }
+                  ]}
+                  style="transition: width var(--transition-time-02), left var(--transition-time-02);"
+                ></TagsView>
+              ) : undefined}
+
+              <AppView></AppView>
+            </ElScrollbar>
+          </main>
+        </div>
+      </>
+    )
+  }
+
+  const renderTop = () => {
+    return (
+      <>
+        <header
+          role="banner"
+          class={[
+            `${prefixCls}__topbar`,
+            'flex items-center justify-between bg-[var(--top-header-bg-color)] relative',
+            {
+              'layout-border__bottom': !tagsView.value
+            }
+          ]}
+        >
+          {logo.value ? <Logo class="header-action"></Logo> : undefined}
+          <Menu
+            mode="horizontal"
+            theme="header"
+            class="h-[var(--top-tool-height)] flex-1 px-10px"
+          ></Menu>
+          <ToolHeader></ToolHeader>
+        </header>
+        <main class={[`${prefixCls}-content`, 'w-full h-[calc(100%-var(--top-tool-height))]']}>
+          <ElScrollbar
+            v-loading={pageLoading.value}
+            class={[
+              `${prefixCls}-content-scrollbar`,
+              {
+                '!h-[calc(100%-var(--tags-view-height))] mt-[calc(var(--tags-view-height))]':
+                  fixedHeader.value && tagsView.value
+              }
+            ]}
+          >
+            {tagsView.value ? (
+              <TagsView
+                class={[
+                  'layout-border__bottom layout-border__top relative',
+                  {
+                    '!fixed w-full top-[var(--top-tool-height)] left-0': fixedHeader.value
+                  }
+                ]}
+                style="transition: width var(--transition-time-02), left var(--transition-time-02);"
+              ></TagsView>
+            ) : undefined}
+
+            <AppView></AppView>
+          </ElScrollbar>
+        </main>
+      </>
+    )
+  }
+
+  const renderCutMenu = () => {
+    const showHeaderMenu = isHeaderMixedNavLayout(layout.value)
+    const fixedTwoColumnMenu = fixedMenu.value || isTwoColumnLayout(layout.value)
+    const showTwoColumnExtraMenu =
+      fixedTwoColumnMenu && permissionStore.getMenuTabRouters.length > 0
+    return (
+      <>
+        <header
+          role="banner"
+          class={[
+            `${prefixCls}__topbar`,
+            'relative flex items-center bg-[var(--top-header-bg-color)] layout-border__bottom'
+          ]}
+        >
+          {logo.value ? (
+            <Logo class="header-action !w-auto !pr-15px min-w-[73px]"></Logo>
+          ) : undefined}
+
+          {showHeaderMenu ? (
+            <Menu
+              mode="horizontal"
+              rootOnly
+              theme="header"
+              class="h-[var(--top-tool-height)] !min-w-[84px] flex-1 px-10px"
+            ></Menu>
+          ) : undefined}
+
+          <ToolHeader class={showHeaderMenu ? 'flex-none' : 'flex-1'}></ToolHeader>
+        </header>
+        <div class="absolute left-0 top-[var(--logo-height)] h-[calc(100%-var(--logo-height))] w-full flex">
+          <TabMenu></TabMenu>
+          <main
+            class={[
+              `${prefixCls}-content`,
+              'absolute top-0 h-[100%] flex-none',
+              {
+                'w-[calc(100%-var(--tab-menu-min-width))] left-[var(--tab-menu-min-width)]':
+                  collapse.value && !showTwoColumnExtraMenu,
+                'w-[calc(100%-var(--tab-menu-max-width))] left-[var(--tab-menu-max-width)]':
+                  !collapse.value && !showTwoColumnExtraMenu,
+                'w-[calc(100%-var(--tab-menu-min-width)-var(--left-menu-max-width))] left-[calc(var(--tab-menu-min-width)+var(--left-menu-max-width))]':
+                  collapse.value && showTwoColumnExtraMenu,
+                'w-[calc(100%-var(--tab-menu-max-width)-var(--left-menu-max-width))] left-[calc(var(--tab-menu-max-width)+var(--left-menu-max-width))]':
+                  !collapse.value && showTwoColumnExtraMenu
+              }
+            ]}
+            style="transition: width var(--transition-time-02);"
+          >
+            <ElScrollbar
+              v-loading={pageLoading.value}
+              class={[
+                `${prefixCls}-content-scrollbar`,
+                {
+                  '!h-[calc(100%-var(--tags-view-height))] mt-[calc(var(--tags-view-height))]':
+                    fixedHeader.value && tagsView.value
+                }
+              ]}
+            >
+              {tagsView.value ? (
+                <TagsView
+                  class={[
+                    'relative layout-border__bottom',
+                    {
+                      '!fixed top-0 left-0 z-10': fixedHeader.value,
+                      'w-[calc(100%-var(--tab-menu-min-width))] !left-[var(--tab-menu-min-width)] mt-[var(--logo-height)]':
+                        collapse.value &&
+                        fixedHeader.value &&
+                        (!fixedTwoColumnMenu || !showTwoColumnExtraMenu),
+                      'w-[calc(100%-var(--tab-menu-max-width))] !left-[var(--tab-menu-max-width)] mt-[var(--logo-height)]':
+                        !collapse.value &&
+                        fixedHeader.value &&
+                        (!fixedTwoColumnMenu || !showTwoColumnExtraMenu),
+                      'w-[calc(100%-var(--tab-menu-min-width)-var(--left-menu-max-width))] !left-[calc(var(--tab-menu-min-width)+var(--left-menu-max-width))] mt-[var(--logo-height)]':
+                        collapse.value && fixedHeader.value && showTwoColumnExtraMenu,
+                      'w-[calc(100%-var(--tab-menu-max-width)-var(--left-menu-max-width))] !left-[calc(var(--tab-menu-max-width)+var(--left-menu-max-width))] mt-[var(--logo-height)]':
+                        !collapse.value && fixedHeader.value && showTwoColumnExtraMenu
+                    }
+                  ]}
+                  style="transition: width var(--transition-time-02);"
+                ></TagsView>
+              ) : undefined}
+
+              <AppView></AppView>
+            </ElScrollbar>
+          </main>
+        </div>
+      </>
+    )
+  }
+
+  return {
+    renderClassic,
+    renderTopLeft,
+    renderTop,
+    renderCutMenu
+  }
+}
