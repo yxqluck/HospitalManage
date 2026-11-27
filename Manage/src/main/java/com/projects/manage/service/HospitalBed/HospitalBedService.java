@@ -12,4 +12,16 @@ public interface HospitalBedService {
     List<HospitalBedVO> findAll();
 
     PageResult<HospitalBedVO> findPage(HospitalBedPageReq req);
+
+    List<HospitalBedVO> findList(Long roomId, Integer bedStatus);
+
+    HospitalBedVO getBedById(Long bedId);
+
+    int create(HospitalBedVO hospitalBedVO);
+
+    int update(HospitalBedVO hospitalBedVO);
+
+    int delete(Long bedId);
+
+    int updateStatus(Long bedId, Integer bedStatus);
 }

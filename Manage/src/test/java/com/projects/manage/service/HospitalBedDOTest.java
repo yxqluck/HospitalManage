@@ -14,4 +14,13 @@ public class HospitalBedDOTest {
         System.out.println(hospitalBedService.findAll());
     }
 
+    @Test
+    public void findListTest(){
+        System.out.println(hospitalBedService.findList(101L,null));
+    }
+
+    @Test
+    public void getBedById(){
+        System.out.println(hospitalBedService.getBedById(1001L));
+    }
 }

@@ -16,6 +16,7 @@
             <if test="req.dept != null and req.dept != ''">
                 AND dept = #{req.dept}
             </if>
+        and deleted = 0
         </where>
         order by hb.room_id, hb.bed_no
         limit #{offset}, #{pageSize}
@@ -23,7 +24,7 @@
 
     <select id="countPage" resultType="Long">
         select count(*)
-        from hospital_bed hb join hospital_room hr on hb.room_id = hb.room_id
+        from hospital_bed hb join hospital_room hr on hb.room_id = hr.room_id
         <where>
             <if test="req.roomId != null">
                 AND hb.room_id = #{req.roomId}
@@ -34,6 +35,21 @@
             <if test="req.dept != null and req.dept != ''">
                 AND dept = #{req.dept}
             </if>
+        and deleted = 0
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.projects.manage.controller.HospitalBed.VO.HospitalBedVO">
+        select bed_id, room_id, bed_no, bed_status
+        from hospital_bed
+        <where>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="bedStatus != null">
+                and bed_status = #{bedStatus}
+            </if>
+        and deleted = 0
         </where>
     </select>
 </mapper>

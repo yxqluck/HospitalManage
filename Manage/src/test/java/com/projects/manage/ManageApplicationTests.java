@@ -30,19 +30,11 @@ class ManageApplicationTests {
 
     }
 
-    @Test
-    public void selecttest(){
-        System.out.println(hospitalBedMapper.findAll());
-        System.out.println("=====================");
-        System.out.println(hospitalBedMapper.findAllById(1001L));
-        System.out.println(hospitalBedMapper.findAllById(101L));
 
-    }
-
-    @Test
-    public void insertTest(){
-        HospitalBedDO hospitalBedDO = new HospitalBedDO(1002L,101L,1,0);
-        hospitalBedMapper.insert(hospitalBedDO);
-    }
+//    @Test
+//    public void insertTest(){
+//        HospitalBedDO hospitalBedDO = new HospitalBedDO(1002L,101L,1,0);
+//        hospitalBedMapper.insert(hospitalBedDO);
+//    }
 
 }

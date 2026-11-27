@@ -57,4 +57,44 @@ public class HospitalBedServiceImpl implements HospitalBedService {
 
         return PageResult.of(list,total);
     }
+
+    @Override
+    public List<HospitalBedVO> findList(Long roomId, Integer bedStatus) {
+        return hospitalBedMapper.findList(roomId, bedStatus);
+    }
+
+    @Override
+    public HospitalBedVO getBedById(Long bedId) {
+        return hospitalBedMapper.getBedById(bedId);
+    }
+
+    @Override
+    public int create(HospitalBedVO hospitalBedVO) {
+        return hospitalBedMapper.create(hospitalBedVO);
+    }
+
+    @Override
+    public int update(HospitalBedVO hospitalBedVO) {
+        return hospitalBedMapper.update(hospitalBedVO);
+    }
+
+    @Override
+    public int delete(Long bedId) {
+        // 判断床位是否被占用
+        final HospitalBedVO hospitalBedVO = hospitalBedMapper.getBedById(bedId);
+        if (hospitalBedVO == null)
+            return 0;
+        if (hospitalBedVO.getBedStatus() == 1)
+            return 0;
+        return hospitalBedMapper.delete(bedId);
+    }
+
+    @Override
+    public int updateStatus(Long bedId, Integer bedStatus) {
+        HospitalBedVO hospitalBedVO = getBedById(bedId);
+        hospitalBedVO.setBedStatus(bedStatus);
+        return hospitalBedMapper.update(hospitalBedVO);
+    }
+
+
 }
