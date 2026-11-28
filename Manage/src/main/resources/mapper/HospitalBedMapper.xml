@@ -16,7 +16,7 @@
             <if test="req.dept != null and req.dept != ''">
                 AND dept = #{req.dept}
             </if>
-        and deleted = 0
+        and hb.deleted = 0 and hr.deleted = 0
         </where>
         order by hb.room_id, hb.bed_no
         limit #{offset}, #{pageSize}
@@ -35,7 +35,7 @@
             <if test="req.dept != null and req.dept != ''">
                 AND dept = #{req.dept}
             </if>
-        and deleted = 0
+        and hb.deleted = 0 and hr.deleted = 0
         </where>
     </select>
 
@@ -50,6 +50,17 @@
                 and bed_status = #{bedStatus}
             </if>
         and deleted = 0
+        </where>
+    </select>
+
+    <select id="countBedByRoom" resultType="Integer">
+        select count(*)
+        from hospital_bed
+        <where>
+            <if test="bedStatus != null">
+                and bed_status = #{bedStatus}
+            </if>
+        and room_id = #{roomId} and deleted = 0
         </where>
     </select>
 </mapper>

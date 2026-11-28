@@ -14,4 +14,6 @@ public class HospitalRoomDO {
     private BigDecimal fee;
 
     private String dept;
+
+    private Integer status;
 }

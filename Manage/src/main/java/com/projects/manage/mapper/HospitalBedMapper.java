@@ -34,4 +34,7 @@ public interface HospitalBedMapper {
 
     @Update("update hospital_bed set deleted = 1 where bed_id = #{bedId} and deleted = 0")
     int delete(@Param("bedId") Long bedId);
+
+    // 获得同一间病房中的对应状态的床位数量
+    int countBedByRoom(@Param("roomId") Long roomId, @Param("bedStatus") Integer bedStatus);
 }

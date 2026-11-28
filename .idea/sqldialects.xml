@@ -2,5 +2,6 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Manage/src/main/resources/mapper/HospitalBedMapper.xml" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Manage/src/main/resources/mapper/HospitalRoomMapper.xml" dialect="GenericSQL" />
   </component>
 </project>

@@ -8,22 +8,15 @@
       label-width="96px"
     >
       <el-form-item label="所属病房" prop="roomId">
-<!--        <el-select v-model="formData.roomId" placeholder="请选择病房" filterable class="!w-full">-->
-<!--          <el-option-->
-<!--            v-for="room in roomOptions"-->
-<!--            :key="room.roomId"-->
-<!--            :label="`${room.roomId}（${room.dept} · ${room.location}）`"-->
-<!--            :value="room.roomId"-->
-<!--            :disabled="room.status === 1"-->
-<!--          />-->
-<!--        </el-select>-->
-        <el-input-number
-          v-model="formData.roomId"
-          :min="1"
-          :controls="false"
-          placeholder="请输入病房号"
-          class="!w-full"
-        />
+        <el-select v-model="formData.roomId" placeholder="请选择病房" filterable class="!w-full">
+          <el-option
+            v-for="room in roomOptions"
+            :key="room.roomId"
+            :label="`${room.roomId}（${room.dept} · ${room.location}）`"
+            :value="room.roomId"
+            :disabled="room.status === 1"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="床位号" prop="bedNo">
         <el-input-number

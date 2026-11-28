@@ -6,7 +6,6 @@ import com.projects.manage.common.Result;
 import com.projects.manage.controller.HospitalBed.VO.HospitalBedVO;
 import com.projects.manage.service.HospitalBed.HospitalBedService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +17,8 @@ public class HospitalBedController {
     @Autowired
     private HospitalBedService hospitalBedService;
 
-    @GetMapping("/all")
-    public List<HospitalBedVO> FindAll(){
-        return List.of();
-    }
-
     @GetMapping("/page")
-    public Result<PageResult<HospitalBedVO>> getPage(HospitalBedPageReq hospitalBedPageReq){
+    public Result<PageResult<HospitalBedVO>> getBedPage(HospitalBedPageReq hospitalBedPageReq){
         return Result.success(hospitalBedService.findPage(hospitalBedPageReq));
     }
 
@@ -63,7 +57,7 @@ public class HospitalBedController {
     }
 
     @PutMapping("/update-status")
-    public Result<HospitalBedVO> put(@RequestBody Map<String,Object> map ) {
+    public Result<HospitalBedVO> updateStatus(@RequestBody Map<String,Object> map ) {
         Long bedId = Long.valueOf(map.get("id").toString());
         Integer bedStatus = Integer.valueOf(map.get("bedStatus").toString());
 
